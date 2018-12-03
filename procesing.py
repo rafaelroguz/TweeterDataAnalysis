@@ -5,8 +5,8 @@ from pymongo import MongoClient
 from wordcloud import STOPWORDS
 from wordcloud import WordCloud
 
-from source_list import generate_source_list
-from source_list import  generate_country_list
+from generate_plot_list import generate_source_list
+from generate_plot_list import generate_country_list
 
 # Creamos una conexión con el servidor
 client = MongoClient(
@@ -104,7 +104,7 @@ def clean_tweets(tweets):
 
 # Genera una imagen .png con una nube de palabras de los términos más usados en los tweets
 def generate_wordcloud(tweets):
-    print("Generando nube de palabras...\n")
+    print("\nGenerando nube de palabras...\n")
 
     text = ""
 
@@ -139,7 +139,7 @@ def generate_wordcloud(tweets):
 
 
 def generate_devices_plot(tweets):
-    print("Generando gráfica de dispositivos...")
+    print("\nGenerando gráfica de dispositivos...\n")
 
     source_list = generate_source_list(tweets)
 
@@ -177,7 +177,7 @@ def generate_devices_plot(tweets):
 
 
 def generate_country_plot(tweets):
-    print("Generando gráfica de países...")
+    print("\nGenerando gráfica de países...\n")
 
     country_list = generate_country_list(tweets)
 
@@ -192,6 +192,6 @@ all_tweets = collection.find()
 all_tweets = clean_tweets(all_tweets)
 generate_devices_plot(all_tweets)
 
-#coutry_tweets = collection.find({"place.country": {"$ne": ""}})
-#coutry_tweets = clean_tweets(coutry_tweets)
-#generate_country_plot(coutry_tweets)
+coutry_tweets = collection.find({"place.country": {"$ne": ""}})
+coutry_tweets = clean_tweets(coutry_tweets)
+generate_country_plot(coutry_tweets)

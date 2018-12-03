@@ -53,7 +53,8 @@ def print_elements(elmt_list, field):
 # Organiza las aplicaciones desde las que se realizaron los tweets, aumentando el contendo de tweet por aplicación o
 # añadiendo nuevas aplicaciones al conteo
 def generate_source_list(tweets):
-    #element_list = []
+    element_list.clear()
+
     field = "source"
 
     for tweet in tweets:
@@ -72,11 +73,11 @@ def generate_source_list(tweets):
 # Organiza las aplicaciones desde las que se realizaron los tweets, aumentando el contendo de tweet por aplicación o
 # añadiendo nuevas aplicaciones al conteo
 def generate_country_list(tweets):
-    element_list = []
+    element_list.clear()
+
     field = "country"
 
     for tweet in tweets:
-        print(element_list[0])
         if not is_in_list(tweet["place"]["country"], field):
             add_element(tweet["place"]["country"], field)
         else:
