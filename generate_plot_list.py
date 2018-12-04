@@ -78,6 +78,7 @@ def generate_country_list(tweets):
     field = "country"
 
     for tweet in tweets:
+
         if not is_in_list(tweet["place"]["country"], field):
             add_element(tweet["place"]["country"], field)
         else:
