@@ -1,4 +1,4 @@
-from quicksort import sort_list
+from sources.quicksort import sort_list
 
 
 # Lista de todas las aplicaciones desde las que se realizaron los tweets con sus conteos
@@ -65,7 +65,7 @@ def generate_source_list(tweets):
 
     new_list = sort_list(element_list, "count")
 
-    print_elements(new_list, field)
+    #print_elements(new_list, field)
 
     return new_list
 
@@ -78,16 +78,31 @@ def generate_country_list(tweets):
     field = "country"
 
     for tweet in tweets:
-
-        if not is_in_list(tweet["place"]["country"], field):
-            add_element(tweet["place"]["country"], field)
-        else:
+        if is_in_list(tweet["place"]["country"], field):
             increment_element(tweet["place"]["country"], field)
+        else:
+            add_element(tweet["place"]["country"], field)
 
     new_list = sort_list(element_list, "count")
 
-    print_elements(new_list, field)
+    #print_elements(new_list, field)
 
     return new_list
 
+def generate_language_list(tweets):
+    element_list.clear()
+
+    field = "language"
+
+    for tweet in tweets:
+        if is_in_list(tweet["lang"], field):
+            increment_element(tweet["lang"], field)
+        else:
+            add_element(tweet["lang"], field)
+
+    new_list = sort_list(element_list, "count")
+
+    #print_elements(new_list, field)
+
+    return new_list
 

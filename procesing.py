@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from PIL import Image
 from pymongo import MongoClient
 from wordcloud import STOPWORDS
 from wordcloud import WordCloud
 
-from generate_plot_list import generate_source_list
-from generate_plot_list import generate_country_list
+from sources.generate_plot_list import generate_source_list
+from sources.generate_plot_list import generate_country_list
+from sources.generate_plot_list import generate_language_list
 
 # Creamos una conexión con el servidor
 client = MongoClient(
@@ -107,12 +107,11 @@ def clean_tweets(tweets):
 def generate_wordcloud(tweets):
     print("\nGenerando nube de palabras...\n")
 
-    text = ""
-
+    tweet_list = []
     for tweet in tweets:
-        # Concatenamos todo el texto de los tweets en una sola variable para poder procesarlo
-        text = text + tweet["text"] + "\n"
-        print(tweet["text"] + "\n")
+        tweet_list.append(tweet["text"])
+
+    text = "\n".join(tweet_list)
 
     # Cargamos la lista de stopwords y añadimos más que consideramos no relevantes para mostrar en la nube de palabras
     # Las stopwords son palabras que serán ignoradas
@@ -129,7 +128,7 @@ def generate_wordcloud(tweets):
     stopwords.add("nintendo")
 
     # Cargamos la máscara que usaremos para darle forma a la nube
-    mask = np.array(Image.open("mario.png"))
+    mask = np.array(Image.open("sources/mario.png"))
 
     # Genera una nube de palabras. Las stopwords serán ignoradas y no apareceran en la gráfica
     wordcloud = WordCloud(width=1079, height=1623, max_words=10000, relative_scaling=1, stopwords=stopwords,
@@ -140,7 +139,7 @@ def generate_wordcloud(tweets):
 
 
 # Genera una gráfica de pastel con las aplicacciones desde donde se realizaron la mayoría de los tweets
-def generate_devices_plot(tweets):
+def generate_app_plot(tweets):
     print("\nGenerando gráfica de dispositivos...\n")
 
     # Obtenemos una lista de objetos con el nombre de la aplicación y el número de tweets
@@ -180,15 +179,22 @@ def generate_devices_plot(tweets):
         labels.append(src["source"])
         sizes.append(src["count"])
 
-    # Generamos una gráfica de pastel
+
+    # Ajusta el tamaño de la gráfica para que se adapte al tamaño del contenido
     plt.tight_layout()
+    # Ajustamos el tamaño de la letra
+    plt.rcParams["font.size"] = 7.0
+    # Añadimos un título
+    plt.title("Most used applications")
+    # Generamos una gráfica de pastel
     plt.pie(sizes, labels=labels, shadow=True, radius=10, autopct="%0.2f%%")
     plt.axis("equal")
 
     # Guardamos la gráfica en una imagen en la misma carpeta que este script
-    plt.savefig("plots/piechart.png", dpi=300)
+    plt.savefig("plots/applications.png", dpi=300)
 
-    plt.show()
+    plt.show(block=False)
+    plt.close()
 
 # Genera una gráfica de barras con los países que más tweets realizaron.
 # Dado que no todos los tweets tienen información de ubicación, esta lista de tweets tiene alrededor de 300+ tweets
@@ -223,9 +229,14 @@ def generate_country_plot(tweets):
     # Prepara la información necesaria para generar la gráfica de barras
     y_pos = np.arange(len(labels))
     plt.yticks(y_pos, labels)
+
+    # Añadimos una etiqueta al eje vertical
     plt.ylabel("Country")
+    # Añadimos una etiqueta al eje horizontal
     plt.xlabel("# of tweets")
+    # Añadimos un título
     plt.title("Top 10 countries with the most tweets")
+    # Ajusta el tamaño de la gráfica para que se adapte al tamaño del contenido
     plt.tight_layout()
 
     # Añade una etiqueta que muestra el número de tweets a lada de cada barra
@@ -236,20 +247,81 @@ def generate_country_plot(tweets):
     plt.barh(y_pos, sizes)
 
     # Guarda la gráfica como imagen en la misma carpeta que este script
-    plt.savefig("plots/barchart.png", dpi=300)
+    plt.savefig("plots/countries.png", dpi=300)
 
-    plt.show()
+    plt.show(block=False)
+    plt.close()
+
+# Genera una gráfica de pastel que representa los idiomas más usados en los tweets
+def generate_language_plot(tweets):
+    print("\nGenerando gráfica de idiomas...\n")
+
+    # Obtenemos una lista de objetos con las siglas del idioma y el número de tweets en ese idioma
+    language_list = generate_language_list(tweets)
+
+    # Dado que hay una enorme cantidad de idiomas, sólo tomaremos un número limitado, definido por la variable max_lang
+    lang_count = 0
+    max_lang = 7
+    lang_plot = []
+
+    # Revisamos la lista de aplicaciones y generamos una con las más usadas para hacer los tweets
+    for lang in language_list:
+        if lang_count < max_lang:
+            lang_plot.append(lang)
+            lang_count = lang_count + 1
+
+        if lang_count == max_lang:
+            lang_plot.append({
+                "language": "Others",
+                "count": 1
+            })
+
+            lang_count = lang_count + 1
+
+        if lang_count > max_lang:
+            lang_plot[max_lang]["count"] = lang_plot[max_lang]["count"] + 1
+
+    # Listado de idiomas a usar como etiquetas en la gráfica
+    labels = []
+    # Número de tweets por idioma
+    sizes = []
+
+    # Añadimos la información para las etiquetas en la gráfica
+    for lang in lang_plot:
+        labels.append(lang["language"])
+        sizes.append(lang["count"])
+
+    # Ajusta el tamaño de la gráfica para que se adapte al tamaño del contenido
+    plt.tight_layout()
+    # Ajustamos el tamaño de la letra
+    plt.rcParams["font.size"] = 7.0
+    # Añadimos un título
+    plt.title("Most used languages")
+    # Generamos una gráfica de pastel
+    plt.pie(sizes, labels=labels, shadow=True, radius=10, autopct="%0.2f%%")
+    plt.axis("equal")
+
+    # Guardamos la gráfica en una imagen en la misma carpeta que este script
+    plt.savefig("plots/languages.png", dpi=300)
+
+    plt.show(block=False)
+    plt.close()
 
 # MAIN BODY------------------------------------------------------------------------------------------------------------#
 
-#eng_tweets = collection.find({"lang": "en"})
-#eng_tweets = clean_tweets(eng_tweets)
-#generate_wordcloud(eng_tweets)
+# Recupera todos los tweets en idioma inglés
+eng_tweets = collection.find({"lang": "en"})
+eng_tweets = clean_tweets(eng_tweets)
+generate_wordcloud(eng_tweets)
 
-#all_tweets = collection.find()
-#all_tweets = clean_tweets(all_tweets)
-#generate_devices_plot(all_tweets)
+# Recupera todos los tweets
+all_tweets = collection.find()
+all_tweets = clean_tweets(all_tweets)
+generate_app_plot(all_tweets)
 
+# Recupera los tweets que contengan información en el campo "place.country"
 coutry_tweets = collection.find({"place.country": {"$ne": ""}})
 coutry_tweets = clean_tweets(coutry_tweets)
 generate_country_plot(coutry_tweets)
+
+generate_language_plot(all_tweets)
