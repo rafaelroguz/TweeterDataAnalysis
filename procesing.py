@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import webbrowser
 import os
+import time
 from PIL import Image
 from pymongo import MongoClient
 from wordcloud import STOPWORDS
@@ -314,25 +315,34 @@ def generate_language_plot(tweets):
     plt.close()
 
 
+# Ejecución principal del programa
+def main():
+    # Recupera todos los tweets en idioma inglés
+    eng_tweets = collection.find({"lang": "en"})
+    eng_tweets = clean_tweets(eng_tweets)
+    generate_wordcloud(eng_tweets)
+
+    # Recupera todos los tweets
+    all_tweets = collection.find()
+    all_tweets = clean_tweets(all_tweets)
+    generate_app_plot(all_tweets)
+
+    # Recupera los tweets que contengan información en el campo "place.country"
+    coutry_tweets = collection.find({"place.country": {"$ne": ""}})
+    coutry_tweets = clean_tweets(coutry_tweets)
+    generate_country_plot(coutry_tweets)
+
+    generate_language_plot(all_tweets)
+
+    # Carga la página web para visualizar las gráficas
+    webbrowser.open("file://" + os.path.realpath("sources/index.html"))
+
+
 # MAIN BODY------------------------------------------------------------------------------------------------------------#
 # La ejecución del script comienza aquí
 
-# Recupera todos los tweets en idioma inglés
-eng_tweets = collection.find({"lang": "en"})
-eng_tweets = clean_tweets(eng_tweets)
-generate_wordcloud(eng_tweets)
+start_time = time.time()
+main()
+print("\n--- %s seconds ---" % (time.time() - start_time))
 
-# Recupera todos los tweets
-all_tweets = collection.find()
-all_tweets = clean_tweets(all_tweets)
-generate_app_plot(all_tweets)
 
-# Recupera los tweets que contengan información en el campo "place.country"
-coutry_tweets = collection.find({"place.country": {"$ne": ""}})
-coutry_tweets = clean_tweets(coutry_tweets)
-generate_country_plot(coutry_tweets)
-
-generate_language_plot(all_tweets)
-
-# Carga la página web para visualizar las gráficas
-webbrowser.open("file://" + os.path.realpath("sources/index.html"))
