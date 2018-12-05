@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import webbrowser
+import os
 from PIL import Image
 from pymongo import MongoClient
 from wordcloud import STOPWORDS
@@ -111,6 +113,7 @@ def generate_wordcloud(tweets):
     for tweet in tweets:
         tweet_list.append(tweet["text"])
 
+    # Unimos el texto de todos los tweets en una sola variable
     text = "\n".join(tweet_list)
 
     # Cargamos la lista de stopwords y añadimos más que consideramos no relevantes para mostrar en la nube de palabras
@@ -131,7 +134,7 @@ def generate_wordcloud(tweets):
     mask = np.array(Image.open("sources/mario.png"))
 
     # Genera una nube de palabras. Las stopwords serán ignoradas y no apareceran en la gráfica
-    wordcloud = WordCloud(width=1079, height=1623, max_words=10000, relative_scaling=1, stopwords=stopwords,
+    wordcloud = WordCloud(width=1079, height=1623, max_words=20000, relative_scaling=1, stopwords=stopwords,
                           mask=mask, contour_color="white").generate(text)
 
     # Guardamos la nube de palabras generada en una imagen en la misma carpeta del script
@@ -325,3 +328,6 @@ coutry_tweets = clean_tweets(coutry_tweets)
 generate_country_plot(coutry_tweets)
 
 generate_language_plot(all_tweets)
+
+# Carga la página web para visualizar las gráficas
+webbrowser.open("file://" + os.path.realpath("sources/index.html"))
