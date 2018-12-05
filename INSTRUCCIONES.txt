@@ -1,0 +1,18 @@
+Equipo:
+Daniel Fernando Baas Colonia
+Rodrigo Castilla López
+Luis Gerardo Castillo Pinkus
+Rafael Rodríguez Guzmán
+
+REQUISITOS
+-Python 3.X
+-pip3 install tweepy
+-pip3 install matplotlib
+-pip3 install pymongo
+-pip3 install numpy
+-pip3 install wordcloud
+
+Instrucciones
+-Entra a la carpeta de TwitterDataAnalysis
+-Abre una consola en la misma ubicación que el script "procesing.py"
+-Ejecuta usando python3 procesing.py

@@ -134,7 +134,7 @@ def generate_wordcloud(tweets):
     mask = np.array(Image.open("sources/mario.png"))
 
     # Genera una nube de palabras. Las stopwords serán ignoradas y no apareceran en la gráfica
-    wordcloud = WordCloud(width=1079, height=1623, max_words=20000, relative_scaling=1, stopwords=stopwords,
+    wordcloud = WordCloud(width=1079, height=1623, max_words=10000, relative_scaling=1, stopwords=stopwords,
                           mask=mask, contour_color="white").generate(text)
 
     # Guardamos la nube de palabras generada en una imagen en la misma carpeta del script
@@ -199,6 +199,7 @@ def generate_app_plot(tweets):
     plt.show(block=False)
     plt.close()
 
+
 # Genera una gráfica de barras con los países que más tweets realizaron.
 # Dado que no todos los tweets tienen información de ubicación, esta lista de tweets tiene alrededor de 300+ tweets
 def generate_country_plot(tweets):
@@ -255,7 +256,9 @@ def generate_country_plot(tweets):
     plt.show(block=False)
     plt.close()
 
+
 # Genera una gráfica de pastel que representa los idiomas más usados en los tweets
+# Dado que hay muchos idiomas solo te van a tomar como máximo los definidos en la variable max_lang
 def generate_language_plot(tweets):
     print("\nGenerando gráfica de idiomas...\n")
 
@@ -310,7 +313,9 @@ def generate_language_plot(tweets):
     plt.show(block=False)
     plt.close()
 
+
 # MAIN BODY------------------------------------------------------------------------------------------------------------#
+# La ejecución del script comienza aquí
 
 # Recupera todos los tweets en idioma inglés
 eng_tweets = collection.find({"lang": "en"})
