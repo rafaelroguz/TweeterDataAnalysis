@@ -52,7 +52,7 @@ def print_elements(elmt_list, field):
 
 # Organiza las aplicaciones desde las que se realizaron los tweets, aumentando el contendo de tweet por aplicación o
 # añadiendo nuevas aplicaciones al conteo
-def generate_source_list(tweets):
+def generate_application_list(tweets):
     element_list.clear()
 
     field = "source"

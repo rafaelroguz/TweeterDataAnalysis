@@ -8,7 +8,7 @@ from pymongo import MongoClient
 from wordcloud import STOPWORDS
 from wordcloud import WordCloud
 
-from sources.generate_plot_list import generate_source_list
+from sources.generate_plot_list import generate_application_list
 from sources.generate_plot_list import generate_country_list
 from sources.generate_plot_list import generate_language_list
 
@@ -147,7 +147,7 @@ def generate_app_plot(tweets):
     print("\nGenerando gráfica de dispositivos...\n")
 
     # Obtenemos una lista de objetos con el nombre de la aplicación y el número de tweets
-    source_list = generate_source_list(tweets)
+    source_list = generate_application_list(tweets)
 
     # Dado que hay una enorme cantidad de aplicaciones, sólo vamos a mostrar las 7 más usadas, y las demás se contarán
     # dentro de "Otras" aplicaciones
